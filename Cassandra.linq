@@ -10,11 +10,6 @@
 
 void Main()
 {
-	// http://en.wikipedia.org/wiki/Cassandra
-	// Cassandra has two timelines.
-	// One in which she will listen to events in the future (destruction of Troy)
-	// The Trojans, if they believe her, will not let the trojan horse into Troy
-	// and therefore avoid destruction of their city. If they do believe her, they will not allow the horse in
 	
 	var present = new TestScheduler();
 	var future = new TestScheduler();
@@ -22,7 +17,6 @@ void Main()
 	 future.AdvanceBy(TimeSpan.FromDays(10).Ticks); 
 	
 	var cassandra = new Cassandra();
-	
 	var trojans = new Trojans(cassandra);
 	var horse = new Horse(present, trojans);
 	cassandra.Trojans = trojans;
@@ -95,8 +89,6 @@ class Cassandra
 {
 	public Cassandra Self {get;set;}
 	public Trojans Trojans {get;set;}
-	public Cassandra() {
-	}	
 
 	public void Warn() {
 		"Cassandra: You must never open for the horse. It's a trap".Dump();
