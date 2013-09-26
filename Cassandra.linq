@@ -44,7 +44,7 @@ void Main()
 
 class Trojans {
 	public bool Alive {get;set;}
-	private bool Skeptics = true; // Skeptics ignore warnings from the future
+	private bool Skeptics = false; // Skeptics ignore warnings from the future
 	public bool BeenWarned {get;set;}
 	private Cassandra Cassandra {get;set;} 
 	public Trojans(Cassandra cassandra) {
