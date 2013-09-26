@@ -27,7 +27,7 @@ Present and future are now in sync
 Time and space is still in order
 ```
 
-## Output with Skeptics=true
+## Output with Skeptics=false
 ```shell
 Horse: Look at us, nice present, yes?
 Trojans: What a nice horse. It must be a present. Open the gates
