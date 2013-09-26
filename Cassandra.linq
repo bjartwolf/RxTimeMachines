@@ -21,20 +21,22 @@ void Main()
 	// We'll give the future som headstart from the present
 	 future.AdvanceBy(TimeSpan.FromDays(10).Ticks); 
 	
-	var cassandra = new Cassandra(present);
+	var cassandra = new Cassandra(present, null);
 	var trojans = new Trojans(present, cassandra);
 	var horse = new Horse(present, trojans);
-
-	var futureCassandra = new Cassandra(future);
+	cassandra.Trojans = trojans;
+	
+	var futureCassandra = new Cassandra(future, cassandra);
 	var futuresTrojans = new Trojans(future, futureCassandra);
 	var futuresHorse = new Horse(future, futuresTrojans);
+	futureCassandra.Trojans = futuresTrojans;
 	
-	present.AdvanceBy(TimeSpan.FromDays(710).Ticks);
 	future.AdvanceBy(TimeSpan.FromDays(700).Ticks);
+	present.AdvanceBy(TimeSpan.FromDays(710).Ticks);
 	if (future.Now == present.Now) {
 		"We are at the same time".Dump();
 		if (futuresTrojans.Alive != trojans.Alive) {
-			"This is a paradox!".Dump();
+			"But we are both dead and alive. This is a paradox!".Dump();
 		} else {
 			"Time and space is still in order".Dump();
 		}
@@ -50,21 +52,29 @@ class Trojans {
 	public Trojans(IScheduler sched, Cassandra cassandra) {
 		Alive = true;
 		BeenWarned = false;
-		Skeptics = true;
+		Skeptics = false;
 		Scheduler = sched;
 		Cassandra = cassandra;
 	}
-	
+	private void OpenDoors() {
+		"Trojans: What a nice horse. It must be a present. Open the gates".Dump();
+		Alive = false;
+		Cassandra.RapeAndAbduct();
+	}
 	public void Knock() {
-		if (!Skeptics && BeenWarned) {
-			"Trojans: We have been warned from the future. We know your cunning plan!".Dump();
+		if (BeenWarned) {
+			"Trojans: We have been warned".Dump();
+			if (Skeptics) {
+				"But we don't listen to that crazy women!".Dump();
+				OpenDoors();
+			} else {
+				"Trojans: We have been warned from the future. We know your cunning plan!".Dump();
+			}
 		} else {
-			"Trojans: What a nice horse. It must be a present. Open the gates".Dump();
-			Alive = false;
-			Cassandra.RapeAndAbduct();
+			OpenDoors();
 		}
 	}
-}
+}	
 
 class Horse
 {
@@ -74,10 +84,9 @@ class Horse
 	public Horse(IScheduler sched, Trojans trojans) {
 		Scheduler = sched;
 		Trojans = trojans;
-		// Stand outside the gates
+		// Stand outside the gates at given absolute time in history
 		Observable.Timer((new DateTime(2, 1, 2)),Scheduler).Subscribe(
 			(_) => {
-				("Time " + Scheduler.Now).Dump();
 				"Horse: Look at us, nice present, yes?".Dump();
 				Trojans.Knock();
 			});
@@ -87,12 +96,23 @@ class Horse
 class Cassandra 
 {
 	public TestScheduler Scheduler {get;set;}
-	
-	public Cassandra(TestScheduler sched) {
+	public Cassandra Self {get;set;}
+	public Trojans Trojans {get;set;}
+	public Cassandra(TestScheduler sched, Cassandra self) {
 		Scheduler = sched;
+		Self = self;
 	}	
+
+	public void Warn() {
+		"Cassandra: You must never open for the horse. It's a trap".Dump();
+		Trojans.BeenWarned = true;
+	}
 	
 	public void RapeAndAbduct () {
 		"Cassandra: Ajax the Lesser, you stink!".Dump();
+		if (Self != null) {
+			"I should warn myself!".Dump();
+			Self.Warn();
+		}
 	}
 }
