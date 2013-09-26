@@ -27,8 +27,11 @@ void Main()
 	var futuresHorse = new Horse(future, futuresTrojans);
 	futureCassandra.Trojans = futuresTrojans;
 	
-	future.AdvanceBy(TimeSpan.FromDays(700).Ticks);
-	present.AdvanceBy(TimeSpan.FromDays(710).Ticks);
+	for (int i = 0; i < 700; i++) {
+		future.AdvanceBy(TimeSpan.FromDays(1).Ticks);
+		present.AdvanceBy(TimeSpan.FromDays(1).Ticks);	
+	}
+	present.AdvanceBy(TimeSpan.FromDays(10).Ticks);
 	if (future.Now == present.Now) {
 		"Present and future are now in sync".Dump();
 		if (futuresTrojans.Alive != trojans.Alive) {
@@ -84,8 +87,7 @@ class Horse
 				Trojans.Knock();
 			});
 		Observable.Timer((new DateTime(2, 11, 20)),Scheduler).Subscribe((_) => {
-				Scheduler.Now.Dump();
-				"A few months passed".Dump();
+				"A few months passed, demonstrating that time is moving side-by-side".Dump();
 			});
 
 	}
