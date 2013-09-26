@@ -21,13 +21,15 @@ void Main()
 	// We'll give the future som headstart from the present
 	 future.AdvanceBy(TimeSpan.FromDays(10).Ticks); 
 	
-	var cassandra = new Cassandra(present, null);
-	var trojans = new Trojans(present, cassandra);
+	var cassandra = new Cassandra();
+	
+	var trojans = new Trojans(cassandra);
 	var horse = new Horse(present, trojans);
 	cassandra.Trojans = trojans;
 	
-	var futureCassandra = new Cassandra(future, cassandra);
-	var futuresTrojans = new Trojans(future, futureCassandra);
+	var futureCassandra = new Cassandra();
+	futureCassandra.Self = cassandra;
+	var futuresTrojans = new Trojans(futureCassandra);
 	var futuresHorse = new Horse(future, futuresTrojans);
 	futureCassandra.Trojans = futuresTrojans;
 	
@@ -44,16 +46,13 @@ void Main()
 	
 }
 class Trojans {
-	public IScheduler Scheduler {get;set;}
 	public bool Alive {get;set;}
-	public bool Skeptics {get;set;} // Skeptics ignore warnings from the future
+	private bool Skeptics = true; // Skeptics ignore warnings from the future
 	public bool BeenWarned {get;set;}
 	public Cassandra Cassandra {get;set;} 
-	public Trojans(IScheduler sched, Cassandra cassandra) {
+	public Trojans(Cassandra cassandra) {
 		Alive = true;
 		BeenWarned = false;
-		Skeptics = false;
-		Scheduler = sched;
 		Cassandra = cassandra;
 	}
 	private void OpenDoors() {
@@ -78,9 +77,8 @@ class Trojans {
 
 class Horse
 {
-	public IScheduler Scheduler {get;set;}
 	public Trojans Trojans {get;set;}
-	
+	public IScheduler Scheduler {get;set;}
 	public Horse(IScheduler sched, Trojans trojans) {
 		Scheduler = sched;
 		Trojans = trojans;
@@ -95,12 +93,9 @@ class Horse
 
 class Cassandra 
 {
-	public TestScheduler Scheduler {get;set;}
 	public Cassandra Self {get;set;}
 	public Trojans Trojans {get;set;}
-	public Cassandra(TestScheduler sched, Cassandra self) {
-		Scheduler = sched;
-		Self = self;
+	public Cassandra() {
 	}	
 
 	public void Warn() {
