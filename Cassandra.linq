@@ -30,30 +30,32 @@ void Main()
 	future.AdvanceBy(TimeSpan.FromDays(700).Ticks);
 	present.AdvanceBy(TimeSpan.FromDays(710).Ticks);
 	if (future.Now == present.Now) {
-		"We are at the same time".Dump();
+		"Present and future are now in sync".Dump();
 		if (futuresTrojans.Alive != trojans.Alive) {
 			"But we are both dead and alive. This is a paradox!".Dump();
 		} else {
 			"Time and space is still in order".Dump();
 		}
 	}
-	
 }
+
 class Trojans {
 	public bool Alive {get;set;}
 	private bool Skeptics = true; // Skeptics ignore warnings from the future
 	public bool BeenWarned {get;set;}
-	public Cassandra Cassandra {get;set;} 
+	private Cassandra Cassandra {get;set;} 
 	public Trojans(Cassandra cassandra) {
 		Alive = true;
 		BeenWarned = false;
 		Cassandra = cassandra;
 	}
+	
 	private void OpenDoors() {
 		"Trojans: What a nice horse. It must be a present. Open the gates".Dump();
 		Alive = false;
 		Cassandra.RapeAndAbduct();
 	}
+	
 	public void Knock() {
 		if (BeenWarned) {
 			"Trojans: We have been warned".Dump();
@@ -71,17 +73,21 @@ class Trojans {
 
 class Horse
 {
-	public Trojans Trojans {get;set;}
+	private Trojans Trojans {get;set;}
 	public IScheduler Scheduler {get;set;}
 	public Horse(IScheduler sched, Trojans trojans) {
 		Scheduler = sched;
 		Trojans = trojans;
 		// Stand outside the gates at given absolute time in history
-		Observable.Timer((new DateTime(2, 1, 2)),Scheduler).Subscribe(
-			(_) => {
+		Observable.Timer((new DateTime(2, 1, 2)),Scheduler).Subscribe((_) => {
 				"Horse: Look at us, nice present, yes?".Dump();
 				Trojans.Knock();
 			});
+		Observable.Timer((new DateTime(2, 11, 20)),Scheduler).Subscribe((_) => {
+				Scheduler.Now.Dump();
+				"A few months passed".Dump();
+			});
+
 	}
 }
 

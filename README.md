@@ -1,9 +1,14 @@
-<Query Kind="Expression" />
-
 # Cassandra
 
 http://en.wikipedia.org/wiki/Cassandra
-Cassandra has two timelines.
-One in which she will listen to events in the future (destruction of Troy)
-The Trojans, if they believe her, will not let the trojan horse into Troy
-and therefore avoid destruction of their city. If they do believe her, they will not allow the horse in
+
+Cassandra has a gift, she can listen to herself in the future. Or, currently, send messages back in time to herself.
+If she gets a message from herself, she will warn the Trojans. If they are skeptics, they will not believe her, and
+thus preserve space-time. However, if they believe her, they will alter history. This will lead to a space-time paradox,
+because Trojans will then be both dead and alive at the same time in the future.
+
+# Time Loop logic
+
+This would be very fun to implement
+
+http://en.wikipedia.org/wiki/Novikov_self-consistency_principle#Time_loop_logic
